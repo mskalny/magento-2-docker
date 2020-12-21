@@ -1,4 +1,4 @@
-FROM php:7.1-apache
+FROM php:7.2-apache
 
 MAINTAINER Rafael Corrêa Gomes <rafaelcgstz@gmail.com>
 
@@ -13,7 +13,7 @@ RUN apt-get update \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -y \
 	libfreetype6-dev \
 	libicu-dev \
-  libssl-dev \
+    libssl-dev \
 	libjpeg62-turbo-dev \
 	libmcrypt-dev \
 	libedit-dev \
@@ -22,7 +22,7 @@ RUN apt-get update \
 	apt-utils \
 	gnupg \
 	redis-tools \
-	mysql-client \
+	default-mysql-client \
 	git \
 	vim \
 	wget \
@@ -45,11 +45,15 @@ RUN docker-php-ext-configure \
   	bcmath \
   	intl \
   	mbstring \
-  	mcrypt \
+#  	mcrypt \
   	pdo_mysql \
   	soap \
   	xsl \
-  	zip
+  	zip \
+  	sockets
+
+RUN pecl install mcrypt-1.0.3 \
+    && docker-php-ext-enable mcrypt
 
 # Install oAuth
 
@@ -63,15 +67,18 @@ RUN apt-get update \
 
 # Install Node, NVM, NPM and Grunt
 
-RUN curl -sL https://deb.nodesource.com/setup_6.x | bash - \
-  	&& apt-get install -y nodejs build-essential \
-    && curl https://raw.githubusercontent.com/creationix/nvm/v0.16.1/install.sh | sh \
-    && npm i -g grunt-cli yarn
+#RUN curl -sL https://deb.nodesource.com/setup_6.x | bash - \
+#  	&& apt-get install -y nodejs build-essential \
+#    && curl https://raw.githubusercontent.com/creationix/nvm/v0.16.1/install.sh | sh \
+#    && apt-get install npm -y \
+#    && npm install npm@latest -g \
+#    && npm \
+#    && npm i -g grunt-cli yarn
 
 # Install Composer
 
 RUN	curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer
-RUN composer global require hirak/prestissimo
+#RUN composer global require hirak/prestissimo
 
 # Install Code Sniffer
 
